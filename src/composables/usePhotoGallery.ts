@@ -118,12 +118,25 @@ export const usePhotoGallery = () => {
         });
     };
 
+    const deletePhoto = async (photo: UserPhoto) => {
+        // Remove this photo from the Photos reference data array
+        photos.value = photos.value.filter((p) => p.filepath !== photo.filepath);
+
+        // Delete photo file from filesystem
+        const filename = photo.filepath.slice(photo.filepath.lastIndexOf('/') + 1);
+        await Filesystem.deleteFile({
+            path: filename,
+            directory: Directory.Data,
+        });
+    };
+
     onMounted(loadSaved);
 
     watch(photos, cachePhotos);
 
     return {
         addNewToGallery,
+        deletePhoto,
         // CHANGE: Update return statement to include `photos` array
         photos,
     };
